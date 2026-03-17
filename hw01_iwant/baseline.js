@@ -19,7 +19,7 @@ const PRODUCT_ID = 40;
 const PRODUCT_URL ="https://ecommerce-playground.lambdatest.io/index.php?route=product/product&product_id="+PRODUCT_ID;
 
 export const options = {
-  vus: 1,
+  vus: 2,
   duration: '5m',
   thresholds: { 
     http_req_duration: ['p(95)<1000'],
@@ -52,7 +52,7 @@ export default async function () {
 
             
             doc.find('li.product-thumb h4.title a').each((_, a) => {
-            // For each <a> title, get its text (via its innerHTML / parse again)
+
             const name = parseHTML(a.innerHTML()).text().trim(); 
             if (name.toLowerCase().includes('iphone') && ++count >= 3) return false; 
             });
@@ -84,7 +84,6 @@ export default async function () {
             // grab all product title anchors
             const titles = doc.find('.product-thumb h4.title a');
 
-            // iterate and count
             titles.each((_, a) => {
             const name = (a.innerHTML() || '').trim().toLowerCase();
             if (name.includes(ITEM)) count++;
@@ -94,10 +93,7 @@ export default async function () {
         },
         });
 
-        // optional debug (avoid in heavy load)
-        // console.log(`iphoneCount=${count}`);
-
-        listOk.add(ok); // if listOk is a Rate metric, ok is perfect
+        listOk.add(ok); 
     });
 
     group('product_detail', () => {
@@ -111,8 +107,6 @@ export default async function () {
             "Product detail loads faster than 1500ms": (r) => r.timings.duration <= 1500
         });
     });    
-
-
-
+    
     sleep(1)
 }
