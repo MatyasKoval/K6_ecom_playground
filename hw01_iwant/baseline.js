@@ -17,6 +17,7 @@ const SUGGEST_URL = "https://ecommerce-playground.lambdatest.io/index.php?route=
 const LIST_URL = "https://ecommerce-playground.lambdatest.io/index.php?route=product%2Fsearch&search="+ITEM;
 const PRODUCT_ID = 40;
 const PRODUCT_URL ="https://ecommerce-playground.lambdatest.io/index.php?route=product/product&product_id="+PRODUCT_ID;
+const PRODUCT_COUNT = 4
 
 export const options = {
   vus: 2,
@@ -47,17 +48,17 @@ export default async function () {
 
         let count = 0;
         check(suggestRes.body, {
-        'at least 3 items in suggestions': (html) => {
+        'at least X items in suggestions': (html) => {
             const doc = parseHTML(html);
 
             
             doc.find('li.product-thumb h4.title a').each((_, a) => {
 
             const name = parseHTML(a.innerHTML()).text().trim(); 
-            if (name.toLowerCase().includes('iphone') && ++count >= 3) return false; 
+            if (name.toLowerCase().includes(ITEM) && ++count >= PRODUCT_COUNT) return false; 
             });
 
-            return count >= 3;
+            return count >= PRODUCT_COUNT;
         },
         });
 
@@ -78,7 +79,7 @@ export default async function () {
 
         //console.log(listRes.body)
         const ok = check(listRes, {
-        'at least 4 iphone products on page': (r) => {
+        'at least X iphone products on page': (r) => {
             const doc = parseHTML(r.body);
 
             // grab all product title anchors
@@ -89,7 +90,7 @@ export default async function () {
             if (name.includes(ITEM)) count++;
             });
 
-            return count >= 4;
+            return count >= PRODUCT_COUNT;
         },
         });
 
